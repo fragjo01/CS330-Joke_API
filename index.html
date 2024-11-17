@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Joke API</title>
+  <link href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 class="title">Joke API</h1>
+
+    <div class="field">
+      <label class="label">Select Language</label>
+      <div class="control">
+        <div class="select">
+          <select id="language">
+            <option value="en">English</option>
+            <option value="eu ">Basque</option>
+            <!-- Add more languages as needed -->
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">Select Category</label>
+      <div class="control">
+        <div class="select">
+          <select id="category">
+            <option value="all">All</option>
+            <option value="neutral">Neutral</option>
+            <option value="chuck">Chuck Norris</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">Number of Jokes</label>
+      <div class="control">
+        <input class="input" type="number" id="number" value="1" min="1">
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">Joke ID</label>
+      <div class="control">
+        <input class="input" type="number" id="jokeId" placeholder="Enter joke ID">
+      </div>
+    </div>
+
+    <div class="control">
+      <button class="button is-link" id="fetchJokes">Fetch Jokes</button>
+    </div>
+
+    <div id="result" class="notification is-info" style="margin-top: 20px;"></div>
+  </div>
+
+  <script>
+    document.getElementById('fetchJokes').addEventListener('click', function() {
+      const language = document.getElementById('language').value;
+      const category = document.getElementById('category').value;
+      const number = document.getElementById('number').value;
+      const jokeId = document.getElementById('jokeId').value;
+
+      let url;
+      if (jokeId) {
+        url = `https://cs330-csg7.onrender.com/api/v1/jokes/${jokeId}`;
+      } else if (number) {
+        url = `https://cs330-csg7.onrender.com/api/v1/jokes/${language}/${category}/${number}`;
+      } else {
+        url = `https://cs330-csg7.onrender.com/api/v1/jokes/${language}/${category}`;
+      }
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('result').innerHTML = JSON.stringify(data.jokes, null, 2);
+        })
+        .catch(error => {
+          document.getElementById('result').innerHTML = error.message;
+        });
+    });
+  </script>
+</body>
+</html>
+
